@@ -2,16 +2,17 @@
     'use strict';
 
     angular
-        .module('myApp', [
+        .module('app', [
             //Everybody has access to this
             'app.core',
             //Feature areas
+            'app.home'
         ])
 
         .config(function($stateProvider, $urlRouterProvider) {
 
 
-        $urlRouterProvider.otherwise("/state1");
+        $urlRouterProvider.otherwise("/home");
 
         $stateProvider
             .state('state1', {
@@ -21,6 +22,11 @@
             .state('state2', {
                 url: "/state2",
                 templateUrl: "app/templates/state2.html"
+            })
+            .state('home', {
+                url: "/home",
+                templateUrl: "app/home/home.html",
+                controller: 'HomeController as vm'
             })
     });
 
