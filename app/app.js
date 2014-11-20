@@ -4,9 +4,8 @@
     angular
         .module('app', [
             //Everybody has access to this
-            'app.core',
+            'app.core'
             //Feature areas
-            'app.home'
         ])
 
         .config(function($stateProvider, $urlRouterProvider) {
@@ -22,11 +21,6 @@
             .state('state2', {
                 url: "/state2",
                 templateUrl: "app/templates/state2.html"
-            })
-            .state('home', {
-                url: "/home",
-                templateUrl: "app/home/home.html",
-                controller: 'HomeController as vm'
             })
     });
 
