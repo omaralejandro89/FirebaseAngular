@@ -1,13 +1,13 @@
-<h2>{{vm.title}}</h2>
-
 <div class="jumbotron">
     <div ng-repeat="message in vm.messages" class="text-center">
-        {{message.user}} - {{message.text}}
+        {{message.user}} - {{message.text}} <br/>
     </div>
 </div>
 
 
 <div>
+    <button type="button" class="btn btn-success" ng-click="vm.pageBack()">Previous</button>
+    <button type="button" class="btn btn-success" ng-click="vm.pageNext()">Next</button>
     <button type="button" class="btn btn-danger" ng-click="vm.turnFeedOff()">Turn feed off</button>
     <br/><br/>
 </div>

@@ -1,79 +1,27 @@
 (function () {
-    /*global firebase*/
+
     'use strict';
 
     angular
         .module('app.test')
-        .controller('TestController', ['$scope', '$timeout', TestController]);
+        .controller('TestController', ['$scope', '$timeout', 'messageFactory', TestController]);
 
     /* @ngInject */
-    function TestController($scope, $timeout) {
+    function TestController($scope, $timeout, messageFactory) {
         /* jshint validthis: true */
         var vm = this;
-        var rootRef = new Firebase('https://flickering-torch-9814.firebaseio.com/');
-        var messagesRef = rootRef.child('messages');
-        var titleRef = rootRef.child('title');
 
-        vm.title = null;
         vm.currentUser = null;
         vm.currentText = null;
         vm.messages = [];
 
-        titleRef.once('value', function(snapshot) {
-            vm.title = snapshot.val();
+        messageFactory.childAdded(5, function(addedChild) {
+           $timeout(function() {
+               vm.messages.push(addedChild);
+           })
         });
-
-        messagesRef.on('child_added', function(snapshot) {
-            $timeout(function() {
-                var snapshotVal = snapshot.val();
-                console.log(snapshotVal);
-                vm.messages.push({
-                    text: snapshotVal.text,
-                    user: snapshotVal.user,
-                    name: snapshot.name()
-                });
-            });
-        });
-
-        messagesRef.on('child_changed', function(snapshot) {
-            $timeout(function() {
-                var snapshotVal = snapshot.val();
-                var message = findMessageByName(snapshot.name());
-                message.text = snapshotVal.text;
-            });
-        });
-
-        messagesRef.on('child_removed', function(snapshot) {
-            $timeout(function() {
-                deleteMessageByName(snapshot.name());
-            });
-        });
-
 
         ////////////////
-
-        function findMessageByName (name) {
-            var messageFound = null;
-            for(var i =0; i < vm.messages.length; i++ ) {
-                var currentMessage = vm.messages[i];
-                if (currentMessage.name == name) {
-                    messageFound = currentMessage;
-                    break;
-                }
-            }
-
-            return messageFound;
-        }
-
-        function deleteMessageByName (name) {
-            for(var i =0; i < vm.messages.length; i++ ) {
-                var currentMessage = vm.messages[i];
-                if (currentMessage.name == name) {
-                    vm.messages.splice(i, 1);
-                    break;
-                }
-            }
-        }
 
         vm.sendMessage = function() {
           var newMessage = {
@@ -81,49 +29,26 @@
               text: vm.currentText
           };
 
-          messagesRef.push(newMessage);
+          messageFactory.addMessage(newMessage);
         };
 
         vm.turnFeedOff = function() {
-            messagesRef.off();
+            messageFactory.turnOff();
         };
 
-
-        /*
-        $scope.$watch('vm.message.text', function(newVal) {
-            if (!newVal) {
-                return;
-            }
-            childRef.update({
-                text: newVal
-            })
-        });
-
-        // https://flickering-torch-9814.firebaseio.com/message
-        vm.setMessage = function() {
-            childRef.set({
-                user: 'Bob',
-                text: 'Hi'
+        vm.pageNext = function() {
+            var lastItem = vm.messages[vm.messages.length - 1];
+            messageFactory.pageNext(lastItem.name, 5).then(function(messages) {
+                vm.messages = messages;
             })
         };
 
-        vm.updateMessage = function() {
-            childRef.update({
-                lastname: 'Smith'
+        vm.pageBack = function() {
+            var firstItem= vm.messages[0];
+            messageFactory.pageBack(firstItem.name, 5).then(function(messages) {
+                vm.messages = messages;
             })
-        };
-
-        vm.deleteMessage = function() {
-            childRef.remove();
-        };
-
-        activate();
-
-        ////////////////
-
-        function activate() {
         }
-        */
 
 
     }

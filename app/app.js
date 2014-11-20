@@ -5,10 +5,12 @@
         .module('app', [
             //Everybody has access to this
             'app.core',
+            'app.services',
             //Feature areas
             'app.test'
         ])
 
+        .constant('FBURL', 'https://flickering-torch-9814.firebaseio.com/')
         .config(function($stateProvider, $urlRouterProvider) {
 
 
